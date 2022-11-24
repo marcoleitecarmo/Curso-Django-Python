@@ -1,10 +1,10 @@
 from django.urls import resolve, reverse
 from recipes import views
-
+from unittest import skip
 from .test_recipe_base import RecipeTestBase
-from .test_recipe_base import Recipe, RecipeTestBase
 
 
+@skip('WIP')
 class RecipeViewsTest(RecipeTestBase):
     def tearDown(self) -> None:
         return super().tearDown()
