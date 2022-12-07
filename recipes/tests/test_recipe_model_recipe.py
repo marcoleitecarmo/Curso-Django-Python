@@ -1,6 +1,7 @@
-from .test_recipe_base import RecipeTestBase, Recipe
 from django.core.exceptions import ValidationError
 from parameterized import parameterized
+
+from .test_recipe_base import Recipe, RecipeTestBase
 
 
 class RecipeModelTest(RecipeTestBase):
@@ -12,9 +13,9 @@ class RecipeModelTest(RecipeTestBase):
         recipe = Recipe(
             category=self.make_category(name='Test Default Category'),
             author=self.make_author(username='newuser'),
-            title='Recipe Title',
+            title='Recipe Title 1',
             description='Recipe Description',
-            slug='recipe-slug',
+            slug='recipe-slug-for-no-defaults',
             preparation_time=10,
             preparation_time_unit='Minutos',
             servings=5,
@@ -31,8 +32,8 @@ class RecipeModelTest(RecipeTestBase):
         ('preparation_time_unit', 65),
         ('servings_unit', 65),
     ])
-    def test_recipe_fields_max_length(self, field, max_lenght):
-        setattr(self.recipe, field, 'A' * (max_lenght + 1))
+    def test_recipe_fields_max_length(self, field, max_length):
+        setattr(self.recipe, field, 'A' * (max_length + 1))
         with self.assertRaises(ValidationError):
             self.recipe.full_clean()
 
@@ -48,4 +49,15 @@ class RecipeModelTest(RecipeTestBase):
         self.assertFalse(
             recipe.is_published,
             msg='Recipe is_published is not False',
+        )
+
+    def test_recipe_string_representation(self):
+        needed = 'Testing Representation'
+        self.recipe.title = needed
+        self.recipe.full_clean()
+        self.recipe.save()
+        self.assertEqual(
+            str(self.recipe), needed,
+            msg=f'Recipe string representation must be '
+                f'"{needed}" but "{str(self.recipe)}" was received.'
         )
